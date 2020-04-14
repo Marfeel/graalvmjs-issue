@@ -1,0 +1,1 @@
+"use strict";var e,t=require("jsdom"),r=(e=require("node-fetch"))&&"object"==typeof e&&"default"in e?e.default:e;var o=Object.freeze({__proto__:null,execute:(e,t)=>t.src?r(t.src).then(e=>e.text()).then(t=>e(t)):Promise.resolve(e(t.innerHTML))});module.exports=function(e,r){const n=new t.JSDOM(e);return r.onExtraction({dom:n.window.document,helpers:o})};
