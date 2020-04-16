@@ -10,9 +10,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 
 @SpringBootApplication
@@ -37,23 +34,21 @@ implements CommandLineRunner {
 
 		String html = read("sample.html");
 
-		List<CompletableFuture> futures = new ArrayList<>(100);
 		for (int i = 0; i < 1000; i++) {
-			futures.add(execute(html, runtimePath, middlewarePath));
+			execute(html, runtimePath, middlewarePath);
 			Thread.sleep(5000); // to avoid killing my MAC
 		}
-
-		CompletableFuture.allOf(futures.toArray(new CompletableFuture[futures.size()])).join();
 
 		LOG.info("EXECUTING : finished");
 	}
 
-	static CompletableFuture<ResultHolder> execute(String input, String runtimePath, String middlewarePath) {
+	static ResultHolder execute(String input, String runtimePath, String middlewarePath) {
 
 		ResultHolder onResolve = new ResultHolder.Success();
 		ResultHolder onReject = new ResultHolder.Failure();
 
-		return NodeJS.runJSAsync(() -> {
+		return NodeJS.runJS(() -> {
+			// TODO maybe NodeJS could work with org.graalvm.polyglot.Source instead of String
 			NodeJS.eval(
 			"(async function(html, runtime, midd) {  \n"
 					+ " const middleware_runtime = require(runtime); \n"
